@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>index</title>
+	<link rel="stylesheet" href="http://twitter.github.io/bootstrap/2.3.2/assets/css/bootstrap.css">
+	<link rel="stylesheet" href="http://twitter.github.io/bootstrap/2.3.2/assets/css/bootstrap-responsive.css">
+	<style>
+/*	ul{
+		display: block;
+		list-style-type: disc;
+	}*/
+	</style>
+</head>
+<body>
+	<div id="fb-root"></div>
+	<div id="Content" class="container">
+    
+	</div>
+	<!--JS-->
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="jquery.lazyload.min.js"></script>
+	<script src="http://twitter.github.io/bootstrap/2.3.2/assets/js/holder/holder.js"></script>
+	<script>
+	  window.fbAsyncInit = function() {
+	    // init the FB JS SDK
+	    FB.init({
+	      appId      : '209372892478274',                        // App ID from the app dashboard
+	      channelUrl : 'http://fb-profilepicswticher.s3-website-ap-southeast-1.amazonaws.com/channel.html', // Channel file for x-domain comms
+	      status     : true,                                 // Check Facebook Login status
+	      xfbml      : true                                  // Look for social plugins on the page
+	    });
+
+	    // Additional initialization code such as adding Event Listeners goes here
+		FB.login(function(response){
+			    // do some after 
+			    console.log(response.authResponse.accessToken);
+			    doAfterLogin(response.authResponse.accessToken);
+		    }, 
+		    {scope:''}
+		);
+	  };
+
+	  // Load the SDK asynchronously
+	  (function(d, s, id){
+	     var js, fjs = d.getElementsByTagName(s)[0];
+	     if (d.getElementById(id)) {return;}
+	     js = d.createElement(s); js.id = id;
+	     js.src = "//connect.facebook.net/en_US/all.js";
+	     fjs.parentNode.insertBefore(js, fjs);
+	   }(document, 'script', 'facebook-jssdk'));
+	</script>
+	<script>
+		function doAfterLogin(accessToken){
+			FB.api("/me?fields=id,name,picture,albums.fields(id,name,cover_photo,link,type)",function(response)
+			{
+			    // console.log(JSON.stringify(response))//取得資料
+			    var result="";
+			    if(response.name!=typeof('undefined')){
+			    	result+='<div id="profileDiv" class="row-fluid">'
+					result+='<div class="span1"><img src="'+response.picture.data.url+'" class="img-circle"></div>';
+			    	result+='<div class="span11"><h3>'+response.name+'</h3></div>';
+					result+='</div><hr>';
+			    }
+			    if(response.albums.data.length>0){
+			    	result+='<div class="row"><ul class="thumbnails">' 
+				    for(var i=0;i<response.albums.data.length;i++){
+				    	// console.log(response.albums.data[i].name+","+response.albums.data[i].id+","+response.albums.data[i].cover_photo+","+response.albums.data[i].link);
+				    	if(response.albums.data[i].type!="app"){
+					    	result+='<li class="span4"><div class="thumbnail">'+
+					    		'<h4>'+response.albums.data[i].name+'</h4>'+
+								'<a href="'+response.albums.data[i].link+'" class="thumbnail">'+
+								  '<img data-src="holder.js/260x180/social" alt="260x180" style="height: 180px;" data-original="'+(typeof(response.albums.data[i].cover_photo)!=="undefined"?'https://graph.facebook.com/'+response.albums.data[i].cover_photo+'/picture?access_token='+accessToken:'noimg.png')+'">'+
+								'</a>'+
+							'</div></li>';
+						}
+				    }
+				    result+='</ul></div>';
+			    }
+
+			    if(result!=null){
+			    	$('#Content').html(result);
+					$(function(){
+				    	$("img").lazyload({placeholder : "/white.gif",effect : "fadeIn"});
+					});
+			    }
+			});
+		}
+	</script>
+
+</body>
+</html>
