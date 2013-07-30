@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>index</title>
-	<link rel="stylesheet" href="http://twitter.github.io/bootstrap/2.3.2/assets/css/bootstrap.css">
-	<link rel="stylesheet" href="http://twitter.github.io/bootstrap/2.3.2/assets/css/bootstrap-responsive.css">
+	<title>FB Head-Shot  Randomer</title>
+	<link rel="stylesheet" href="//d1mwy13430000y.cloudfront.net/bootstrap+2/css/bootstrap.css">
+	<link rel="stylesheet" href="//d1mwy13430000y.cloudfront.net/bootstrap+2/css/bootstrap-responsive.css">
 	<style>
 /*	ul{
 		display: block;
@@ -19,8 +19,8 @@
 	</div>
 	<!--JS-->
 	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-	<script src="jquery.lazyload.min.js"></script>
-	<script src="http://twitter.github.io/bootstrap/2.3.2/assets/js/holder/holder.js"></script>
+	<script src="//d1mwy13430000y.cloudfront.net/jquery+plugin/jquery.lazyload.min.js"></script>
+	<script src="//d1mwy13430000y.cloudfront.net/holder/holder.js"></script>
 	<script>
 	  window.fbAsyncInit = function() {
 	    // init the FB JS SDK
@@ -34,10 +34,9 @@
 	    // Additional initialization code such as adding Event Listeners goes here
 		FB.login(function(response){
 			    // do some after 
-			    console.log(response.authResponse.accessToken);
 			    doAfterLogin(response.authResponse.accessToken);
 		    }, 
-		    {scope:''}
+		    {scope:'user_photos,user_about_me'}
 		);
 	  };
 
@@ -51,38 +50,71 @@
 	   }(document, 'script', 'facebook-jssdk'));
 	</script>
 	<script>
+		$(function(){
+			var rootElement=this;
+			console.log("jquery ready");
+	    	$(rootElement).on('click','.btn_randomIt',function(event){
+	    		var albumID=$(this).data("albumid");
+				FB.api(
+					{
+						method:'fql.query',
+						query:'SELECT object_id FROM photo WHERE album_object_id = "'+albumID+'" ORDER BY rand() limit 1'
+					},function(response){
+						if(response.length>0){
+				    		var url="https://www.facebook.com/photo.php?fbid="+response[0].object_id+"&type=1&makeprofile=1&makeuserprofile=1#";
+							window.open(url, '_blank');
+						}else{
+							alert("FB API error!");
+						}
+				});
+	    	});
+	    	$(rootElement).on('click','.btn_openAlbum',function(event){
+	    		window.open($(this).data("url"), '_blank');
+	    	});
+		});
 		function doAfterLogin(accessToken){
-			FB.api("/me?fields=id,name,picture,albums.fields(id,name,cover_photo,link,type)",function(response)
+			FB.api("/me?fields=id,name,picture,albums.fields(id,name,cover_photo,link,type,count)",function(response)
 			{
 			    // console.log(JSON.stringify(response))//取得資料
-			    var result="";
-			    if(response.name!=typeof('undefined')){
-			    	result+='<div id="profileDiv" class="row-fluid">'
-					result+='<div class="span1"><img src="'+response.picture.data.url+'" class="img-circle"></div>';
-			    	result+='<div class="span11"><h3>'+response.name+'</h3></div>';
-					result+='</div><hr>';
-			    }
+			    var result="",profileResult="",profileAlbumID;
 			    if(response.albums.data.length>0){
 			    	result+='<div class="row"><ul class="thumbnails">' 
 				    for(var i=0;i<response.albums.data.length;i++){
 				    	// console.log(response.albums.data[i].name+","+response.albums.data[i].id+","+response.albums.data[i].cover_photo+","+response.albums.data[i].link);
-				    	if(response.albums.data[i].type!="app"){
-					    	result+='<li class="span4"><div class="thumbnail">'+
-					    		'<h4>'+response.albums.data[i].name+'</h4>'+
-								'<a href="'+response.albums.data[i].link+'" class="thumbnail">'+
-								  '<img data-src="holder.js/260x180/social" alt="260x180" style="height: 180px;" data-original="'+(typeof(response.albums.data[i].cover_photo)!=="undefined"?'https://graph.facebook.com/'+response.albums.data[i].cover_photo+'/picture?access_token='+accessToken:'noimg.png')+'">'+
-								'</a>'+
-							'</div></li>';
+				    	if(response.albums.data[i].type!="app"&&response.albums.data[i].count>0){
+				    		if(response.albums.data[i].type=="profile"){
+				    			profileAlbumID=response.albums.data[i].id;
+				    		}else{
+						    	result+='<li class="span4"><div class="thumbnail">'+
+						    		'<h5>'+response.albums.data[i].name+'</h5>'+
+									'<a href="'+response.albums.data[i].link+'" class="thumbnail">'+
+									  '<img data-src="holder.js/260x180/social" class="';
+								if(i<6){	  
+									  result+=" preshow";
+								}
+							  	result+='" alt="260x180" style="height: 180px;" data-original="'+(typeof(response.albums.data[i].cover_photo)!=="undefined"?'https://graph.facebook.com/'+response.albums.data[i].cover_photo+'/picture?access_token='+accessToken:'noimg.png')+'">'+
+									'</a>'+
+									'<button class="btn_openAlbum btn btn-primary" data-url="'+response.albums.data[i].link+'">View Photos</button>'+
+									'<button class="btn_randomIt btn btn-success" data-albumid="'+response.albums.data[i].id+'">Use It</button>'
+								'</div></li>';
+							}
 						}
 				    }
 				    result+='</ul></div>';
 			    }
-
+			    if(response.name!=typeof('undefined')){
+			    	profileResult+='<div id="profileDiv" class="row-fluid">'
+					profileResult+='<div class="span1"><img src="'+response.picture.data.url+'" class="img-circle"></div>';
+			    	profileResult+='<div class="span11"><h3>'+response.name+'</h3></div>';
+			    	if(profileAlbumID!=null){
+				    	profileResult+='<button class="btn_randomIt btn btn-success" data-albumid="'+profileAlbumID+'">Random it!</button>'
+				    }
+					profileResult+='</div><hr>';
+			    }
 			    if(result!=null){
-			    	$('#Content').html(result);
-					$(function(){
-				    	$("img").lazyload({placeholder : "/white.gif",effect : "fadeIn"});
-					});
+			    	$('#Content').html(profileResult+result);
+			    	$("img.preshow").lazyload({placeholder : "/white.gif",effect : "fadeIn",skip_invisible : false }).show();
+			    	$("img").lazyload({placeholder : "/white.gif",effect : "fadeIn",skip_invisible : false });
 			    }
 			});
 		}
