@@ -6,6 +6,9 @@
 	<link rel="stylesheet" href="//d1mwy13430000y.cloudfront.net/bootstrap+2/css/bootstrap.css">
 	<link rel="stylesheet" href="//d1mwy13430000y.cloudfront.net/bootstrap+2/css/bootstrap-responsive.css">
 	<style>
+	.lazy {
+	  display: none;
+	}
 /*	ul{
 		display: block;
 		list-style-type: disc;
@@ -61,13 +64,24 @@
 						query:'SELECT object_id FROM photo WHERE album_object_id = "'+albumID+'" ORDER BY rand() limit 1'
 					},function(response){
 						if(response.length>0){
-				    		var url="https://www.facebook.com/photo.php?fbid="+response[0].object_id+"&type=1&makeprofile=1&makeuserprofile=1#";
-							window.open(url, '_blank');
+				    		var dataUrl="https://www.facebook.com/photo.php?fbid="+response[0].object_id+"&type=1&makeprofile=1&makeuserprofile=1#";
+							var newWindow=window.open(dataUrl, '_blank');
+							top.location.reload();
+							// $.ajax({
+							// 	url:dataUrl
+							// }).done(function(){
+							// 	top.location.reload();
+							// }).fail(function(){
+							// 	alert("Switch Picture failed!");
+							// });
 						}else{
 							alert("FB API error!");
 						}
 				});
 	    	});
+			$(rootElement).on('click','.btn_favorIt',function(event){
+				alert("done");
+			});
 	    	$(rootElement).on('click','.btn_openAlbum',function(event){
 	    		window.open($(this).data("url"), '_blank');
 	    	});
@@ -88,14 +102,16 @@
 						    	result+='<li class="span4"><div class="thumbnail">'+
 						    		'<h5>'+response.albums.data[i].name+'</h5>'+
 									'<a href="'+response.albums.data[i].link+'" class="thumbnail">'+
-									  '<img data-src="holder.js/260x180/social" class="';
+									  '<img data-src="holder.js/260x180/social" class="lazy ';
 								if(i<6){	  
 									  result+=" preshow";
+								}else{
+									  result+=" lazyload";
 								}
 							  	result+='" alt="260x180" style="height: 180px;" data-original="'+(typeof(response.albums.data[i].cover_photo)!=="undefined"?'https://graph.facebook.com/'+response.albums.data[i].cover_photo+'/picture?access_token='+accessToken:'noimg.png')+'">'+
 									'</a>'+
-									'<button class="btn_openAlbum btn btn-primary" data-url="'+response.albums.data[i].link+'">View Photos</button>'+
-									'<button class="btn_randomIt btn btn-success" data-albumid="'+response.albums.data[i].id+'">Use It</button>'
+									'<button class="btn_openAlbum btn btn-primary" data-url="'+response.albums.data[i].link+'">View</button>'+
+									'<button class="btn_randomIt btn btn-success" data-albumid="'+response.albums.data[i].id+'">Use</button>'
 								'</div></li>';
 							}
 						}
@@ -105,16 +121,16 @@
 			    if(response.name!=typeof('undefined')){
 			    	profileResult+='<div id="profileDiv" class="row-fluid">'
 					profileResult+='<div class="span1"><img src="'+response.picture.data.url+'" class="img-circle"></div>';
-			    	profileResult+='<div class="span11"><h3>'+response.name+'</h3></div>';
+			    	profileResult+='<div class="span4"><h3>'+response.name+'</h3></div>';
 			    	if(profileAlbumID!=null){
-				    	profileResult+='<button class="btn_randomIt btn btn-success" data-albumid="'+profileAlbumID+'">Random it!</button>'
+				    	profileResult+='<div class="span7"><p><button class="btn_randomIt btn btn-success" data-albumid="'+profileAlbumID+'"><i class="icon-play icon-white"></i>Random it!</button><button class="btn_favorIt btn btn-warning" data-albumid="'+profileAlbumID+'"><i class="icon-bookmark icon-white"></i>Favor it!</button></p></div>';
 				    }
 					profileResult+='</div><hr>';
 			    }
 			    if(result!=null){
 			    	$('#Content').html(profileResult+result);
-			    	$("img.preshow").lazyload({placeholder : "/white.gif",effect : "fadeIn",skip_invisible : false }).show();
-			    	$("img").lazyload({placeholder : "/white.gif",effect : "fadeIn",skip_invisible : false });
+			    	// $("img.preshow").lazyload({placeholder : "/white.gif",effect : "fadeIn",skip_invisible : false }).show();
+			    	$("img").show().lazyload({placeholder : "/white.gif",effect : "fadeIn",skip_invisible : false });
 			    }
 			});
 		}
