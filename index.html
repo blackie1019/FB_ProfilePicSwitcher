@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>FB ProfilePicSwitcher</title>
+	<title>FB ProfilePicSwitcher-更換FB大頭照的小玩具</title>
 	<link rel="stylesheet" href="//d1mwy13430000y.cloudfront.net/bootstrap+2/css/bootstrap.css">
 	<link rel="stylesheet" href="//d1mwy13430000y.cloudfront.net/bootstrap+2/css/bootstrap-responsive.css">
 	<style>
@@ -17,9 +17,7 @@
 </head>
 <body>
 	<div id="fb-root"></div>
-	<div id="Content" class="container">
-    
-	</div>
+	<div id="Content" class="container"></div>
 	<!--JS-->
 	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 	<script src="//d1mwy13430000y.cloudfront.net/jquery+plugin/jquery.lazyload.min.js"></script>
@@ -53,6 +51,7 @@
 	   }(document, 'script', 'facebook-jssdk'));
 	</script>
 	<script>
+		var newWindow,timer;
 		$(function(){
 			var rootElement=this;
 			console.log("jquery ready");
@@ -65,33 +64,57 @@
 					},function(response){
 						if(response.length>0){
 				    		var dataUrl="https://www.facebook.com/photo.php?fbid="+response[0].object_id+"&type=1&makeprofile=1&makeuserprofile=1#";
-							var newWindow=window.open(dataUrl, '_blank');
-							top.location.reload();
-							// $.ajax({
-							// 	url:dataUrl
-							// }).done(function(){
-							// 	top.location.reload();
-							// }).fail(function(){
-							// 	alert("Switch Picture failed!");
-							// });
+							newWindow=window.open(dataUrl, '_blank');
+							timer=setInterval(function(){checkNewWindow();},1000);
 						}else{
 							alert("FB API error!");
 						}
 				});
 	    	});
 			$(rootElement).on('click','.btn_favorIt',function(event){
-				alert("done");
+				favorToBookmark();
 			});
 	    	$(rootElement).on('click','.btn_openAlbum',function(event){
 	    		window.open($(this).data("url"), '_blank');
 	    	});
 		});
+		function checkNewWindow(){
+			console.log("check newWindow...");
+			if(newWindow.closed){
+				 top.location.reload();
+				 clearInterval(timer);
+			}
+		}
+		function favorToBookmark(){
+			// window.location.href="favor.html";
+			var title=document.title;
+			var url=window.location.href+'?action=';
+			console.log("detecting..");
+			var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+		    var isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+			if (isChrome) {//For Chrome should simulate keyPress 
+				//Ctrl+D(=>68)可以在chrome下新增
+			} else if (window.sidebar) { // For Mozilla Firefox Bookmark
+				window.sidebar.addPanel(title, url,"");
+			} else if( window.external || document.all) { // For IE Favorite
+				window.external.AddFavorite( title, url);
+			} else if(window.opera && window.print) {
+				$(this).attr("href",bookmarkUrl);
+				$(this).attr("title",bookmarkTitle);
+				$(this).attr("rel","sidebar");
+				$(this).click();
+			} else { // for other browsers which does not support
+				 alert('Your browser does not support this bookmark action');
+				 return false;
+			}
+		}
 		function doAfterLogin(accessToken){
 			FB.api("/me?fields=id,name,picture,albums.fields(id,name,cover_photo,link,type,count)",function(response)
 			{
 			    // console.log(JSON.stringify(response))//取得資料
 			    var result="",profileResult="",profileAlbumID;
 			    if(response.albums.data.length>0){
+			    	var albumCount=0;
 			    	result+='<div class="row"><ul class="thumbnails">' 
 				    for(var i=0;i<response.albums.data.length;i++){
 				    	// console.log(response.albums.data[i].name+","+response.albums.data[i].id+","+response.albums.data[i].cover_photo+","+response.albums.data[i].link);
@@ -102,18 +125,19 @@
 						    	result+='<li class="span4"><div class="thumbnail">'+
 						    		'<h5>'+response.albums.data[i].name+'</h5>'+
 									'<a href="'+response.albums.data[i].link+'" class="thumbnail">'+
-									  '<img data-src="holder.js/260x180/social" class="lazy ';
-								if(i<6){	  
-									  result+=" preshow";
+									  '<img data-src="holder.js/260x180/social"';
+								if(albumCount<=6){	  
+									  result+=' class="preload" ';
 								}else{
-									  result+=" lazyload";
+									  result+=' class="lazyload" ';
 								}
-							  	result+='" alt="260x180" style="height: 180px;" data-original="'+(typeof(response.albums.data[i].cover_photo)!=="undefined"?'https://graph.facebook.com/'+response.albums.data[i].cover_photo+'/picture?access_token='+accessToken:'noimg.png')+'">'+
+							  	result+=' alt="260x180" style="height: 180px;" data-original="'+(typeof(response.albums.data[i].cover_photo)!=="undefined"?'https://graph.facebook.com/'+response.albums.data[i].cover_photo+'/picture?access_token='+accessToken:'noimg.png')+'">'+
 									'</a>'+
 									'<button class="btn_openAlbum btn btn-primary" data-url="'+response.albums.data[i].link+'">View</button>'+
 									'<button class="btn_randomIt btn btn-success" data-albumid="'+response.albums.data[i].id+'">Use</button>'
 								'</div></li>';
 							}
+							albumCount++;
 						}
 				    }
 				    result+='</ul></div>';
@@ -129,8 +153,9 @@
 			    }
 			    if(result!=null){
 			    	$('#Content').html(profileResult+result);
-			    	// $("img.preshow").lazyload({placeholder : "/white.gif",effect : "fadeIn",skip_invisible : false }).show();
-			    	$("img").show().lazyload({placeholder : "/white.gif",effect : "fadeIn",skip_invisible : false });
+			    	$("img.preload").lazyload({event:"imgPreLoad",placeholder : "/white.gif",effect : "fadeIn"});
+			    	$("img.lazyload").lazyload({placeholder : "/white.gif",effect : "fadeIn"});
+			    	$("img").trigger('imgPreLoad');
 			    }
 			});
 		}
