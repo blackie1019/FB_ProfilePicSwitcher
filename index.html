@@ -16,6 +16,7 @@
 	</style>
 </head>
 <body>
+	<a href="https://github.com/blackie1019/FB_ProfilePicSwitcher"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
 	<div id="fb-root"></div>
 	<div id="Content" class="container"></div>
 	<!--JS-->
@@ -124,7 +125,6 @@
 				    		}else{
 						    	result+='<li class="span4"><div class="thumbnail">'+
 						    		'<h5>'+response.albums.data[i].name+'</h5>'+
-									'<a href="'+response.albums.data[i].link+'" class="thumbnail">'+
 									  '<img data-src="holder.js/260x180/social"';
 								if(albumCount<=6){	  
 									  result+=' class="preload" ';
@@ -132,7 +132,6 @@
 									  result+=' class="lazyload" ';
 								}
 							  	result+=' alt="260x180" style="height: 180px;" data-original="'+(typeof(response.albums.data[i].cover_photo)!=="undefined"?'https://graph.facebook.com/'+response.albums.data[i].cover_photo+'/picture?access_token='+accessToken:'noimg.png')+'">'+
-									'</a>'+
 									'<button class="btn_openAlbum btn btn-primary" data-url="'+response.albums.data[i].link+'">View</button>'+
 									'<button class="btn_randomIt btn btn-success" data-albumid="'+response.albums.data[i].id+'">Use</button>'
 								'</div></li>';

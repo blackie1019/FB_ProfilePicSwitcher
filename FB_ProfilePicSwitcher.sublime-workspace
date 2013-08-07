@@ -4,6 +4,66 @@
 		"selected_items":
 		[
 			[
+				"sim",
+				"simulatedClick"
+			],
+			[
+				"simu",
+				"simulateA"
+			],
+			[
+				"hid",
+				"hideArea"
+			],
+			[
+				"tim",
+				"timer"
+			],
+			[
+				"lazy",
+				"lazyload"
+			],
+			[
+				"fai",
+				"fail"
+			],
+			[
+				"alb",
+				"albumID"
+			],
+			[
+				"albu",
+				"albumID"
+			],
+			[
+				"resp",
+				"response"
+			],
+			[
+				"ajax",
+				"ajax	jQuery"
+			],
+			[
+				"mo",
+				"mouseover	jQuery"
+			],
+			[
+				"roo",
+				"rootElement"
+			],
+			[
+				"con",
+				"console	jsProp"
+			],
+			[
+				"unde",
+				"undefined	jsProp"
+			],
+			[
+				"pro",
+				"profileDiv"
+			],
+			[
 				"func",
 				"function	jsProp"
 			],
@@ -34,10 +94,6 @@
 			[
 				"posobj",
 				"posObject2"
-			],
-			[
-				"pro",
-				"prototype	jsProp"
 			],
 			[
 				"va",
@@ -380,10 +436,6 @@
 				"infowindowHTML"
 			],
 			[
-				"con",
-				"console"
-			],
-			[
 				"not",
 				"note2"
 			],
@@ -462,58 +514,6 @@
 			[
 				"defa",
 				"defaultStopValue"
-			],
-			[
-				"fromd",
-				"fromdest"
-			],
-			[
-				"divst",
-				"divStop_2"
-			],
-			[
-				"divs",
-				"divStop_1"
-			],
-			[
-				"divS",
-				"divStop_1"
-			],
-			[
-				"begi",
-				"dviBegin_stop"
-			],
-			[
-				"swi",
-				"stopSwithStatus_index_02"
-			],
-			[
-				"stops",
-				"stopSwithStatus_index_02"
-			],
-			[
-				"com",
-				"command"
-			],
-			[
-				"get",
-				"getAppType"
-			],
-			[
-				"de",
-				"DefaultPage_eng"
-			],
-			[
-				"devi",
-				"device"
-			],
-			[
-				"fu",
-				"function"
-			],
-			[
-				"ma",
-				"marker"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 93.0,
+		"height": 375.0,
 		"selected_items":
 		[
 			[
@@ -531,12 +531,12 @@
 				"Package Control: Install Package"
 			],
 			[
-				"pa",
+				"pack",
 				"Package Control: Install Package"
 			],
 			[
-				"pack",
-				"Package Control: List Packages"
+				"pa",
+				"Package Control: Install Package"
 			],
 			[
 				"remov",
@@ -600,6 +600,9 @@
 	},
 	"file_history":
 	[
+		"/Users/blackie/Desktop/FB_ProfilePicSwitcher/index.html",
+		"/Users/blackie/Desktop/FB_ProfilePicSwitcher/README.md",
+		"/Users/blackie/Desktop/FB_ProfilePicSwitcher/favor.html",
 		"/Users/blackie/Library/Application Support/Sublime Text 2/Packages/Git/Git.sublime-settings",
 		"/Users/blackie/Desktop/BlackieStudio/settings.py",
 		"/Users/blackie/Desktop/BlackieStudio/views.py",
@@ -666,6 +669,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"http://s3-ap-southeast-1.amazonaws.com/blackie-cdn",
 			"btn12",
 			"時刻及站點",
 			"getDefaultParkBase",
@@ -792,8 +796,7 @@
 			"changeToLP",
 			"getLif",
 			"selectBase",
-			"openb",
-			"set"
+			"openb"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -801,6 +804,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"//d1mwy13430000y.cloudfront.net",
 			"page2",
 			"page1",
 			"TAP0515.nsc.gov.tw",
